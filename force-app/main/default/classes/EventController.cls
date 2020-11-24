@@ -1,8 +1,4 @@
 public with sharing class EventController {
-  public static List<Schema.FieldSetMember> getFields() {
-    return SObjectType.Event.FieldSets.CustomEventForm.getFields();
-  }
-
   @AuraEnabled(Cacheable=False)
   public static List<Field> getFieldsInfo(String recordId) {
     List<Field> fields = new List<Field>();
@@ -19,15 +15,16 @@ public with sharing class EventController {
     return fields;
   }
 
+  public static List<Schema.FieldSetMember> getFields() {
+    return SObjectType.Event.FieldSets.CustomEventForm.getFields();
+  }
+
   private static List<Field> getEvent(String recordId, List<Field> fields) {
     String query = 'SELECT ';
     for(Field field : fields) {
       query += field.apiName + ', ';
     }
-    
     query += 'Id FROM Event WHERE Id = :recordId';
-    System.debug(recordId);
-    System.debug(query);
 
     sObject[] result = Database.query(query);
     Event event = (Event) result[0];
@@ -38,14 +35,9 @@ public with sharing class EventController {
 
     return fields;
   }
+
   @AuraEnabled(Cacheable=False)
-  public static List<String> getEventSubtipes() {
-    List<String> picklist= new List<String>();
-    Schema.DescribeFieldResult field = Event.EventSubtype.getDescribe();
-    List<Schema.PicklistEntry> valuesSets = field.getPicklistValues();
-    for( Schema.PicklistEntry valueSet : valuesSets){
-        picklist.add(valueSet.getLabel());
-    }     
-    return picklist;
+  public static void upsertEvent(Event event) {
+    Database.upsert(event);
   }
 }

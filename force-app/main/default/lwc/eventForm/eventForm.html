@@ -5,13 +5,17 @@
       <template for:each={fields} for:item="field">
         <lightning-input label={field.label} 
                          key={field.apiName}
-                         value={field.value}
                          required={field.required}
-                         type={field.dataType}>
+                         type={field.dataType}
+                         value={field.value}
+                         checked={field.value}>
         </lightning-input>
       </template>
 
-      <lightning-button class="slds-var-m-top_small" variant="brand" type="submit" label="Save">
+      <lightning-button 
+                        onclick={submit}
+                        variant="brand" 
+                        label="Save">
       </lightning-button>
 
     </div>
