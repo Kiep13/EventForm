@@ -9,17 +9,19 @@ public with sharing class EventController {
     }
 
     if(recordId != null) {
-      fields = EventController.getEvent(recordId, fields);
+      fields = EventController.getEventValues(recordId, fields);
     }
 
     return fields;
   }
 
-  public static List<Schema.FieldSetMember> getFields() {
+  @TestVisible
+  private static List<Schema.FieldSetMember> getFields() {
     return SObjectType.Event.FieldSets.CustomEventForm.getFields();
   }
 
-  private static List<Field> getEvent(String recordId, List<Field> fields) {
+  @TestVisible
+  private static List<Field> getEventValues(String recordId, List<Field> fields) {
     String query = 'SELECT ';
     for(Field field : fields) {
       query += field.apiName + ', ';
