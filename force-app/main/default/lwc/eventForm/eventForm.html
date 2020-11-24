@@ -3,21 +3,36 @@
 		<div class="slds-card__body_inner">
 
       <template for:each={fields} for:item="field">
-        <lightning-input label={field.label} 
-                         key={field.apiName}
-                         required={field.required}
-                         type={field.dataType}
-                         value={field.value}
-                         checked={field.value}>
-        </lightning-input>
+
+        <template if:true={field.isPicklist}>
+          <lightning-combobox name={field.apiName}
+                              label={field.label}
+                              value={field.value}
+                              options={field.picklistValues}
+                              key={field.apiName}>
+          </lightning-combobox>
+        </template>
+
+        <template if:false={field.isPicklist}>
+          <lightning-input label={field.label} 
+                           name={field.apiName}
+                           key={field.apiName}
+                           required={field.required}
+                           type={field.dataType}
+                           value={field.value}
+                           checked={field.value}>
+          </lightning-input>
+        </template>
+        
       </template>
 
-      <lightning-button 
-                        onclick={submit}
-                        variant="brand" 
-                        label="Save">
-      </lightning-button>
-
+      <div class="slds-align_absolute-center slds-var-m-top_small">
+        <lightning-button onclick={submit}
+                          variant="brand" 
+                          label="Save">
+        </lightning-button>
+      </div>
+  
     </div>
   </lightning-card>
 

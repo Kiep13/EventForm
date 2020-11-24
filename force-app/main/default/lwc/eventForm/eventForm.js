@@ -33,7 +33,10 @@ export default class EventForm extends LightningElement {
     getFieldsInfo({recordId: this.recordId})
       .then((result) => {
         this.fields = result;
-        this.glueResult();
+
+        console.log(result);
+
+        this.updateDatatypes();
       })
       .catch(error => {
         this.showToastEvent(this.ERROR_GET_FIELDS,
@@ -42,8 +45,9 @@ export default class EventForm extends LightningElement {
       });
   }
 
-  glueResult() {
+  updateDatatypes() {
     for(let i = 0; i < this.fields.length; i++) {
+      this.fields[i].isPicklist = this.fields[i].dataType == 'PICKLIST';
       this.fields[i].dataType = this.convertDatatype(this.fields[i].dataType);
     }
   }
@@ -72,12 +76,10 @@ export default class EventForm extends LightningElement {
 
     let record = {};
 
-    inputs.forEach((input, index) => {
-      //console.log(this.fields[index].apiName, input.value, input.checked)
-
+    inputs.forEach((input) => {
       let value;
 
-      switch(this.fields[index].dataType) {
+      switch(input.type) {
         case 'checkbox': {
           value = input.checked;
         } break;
@@ -89,10 +91,14 @@ export default class EventForm extends LightningElement {
         }
       }
 
-      this.fields[index].value = value;
-      record[this.fields[index].apiName] = value;
+      record[input.name] = value;
     });
     
+    const picklists = [...this.template.querySelectorAll('lightning-combobox')];
+    picklists.forEach((picklist) => {
+      record[picklist.name] = picklist.value;
+    })
+
     if(this.recordId != null) record[ID_FIELD.fieldApiName] = this.recordId;
 
     this.makeUpsertRequest(record);

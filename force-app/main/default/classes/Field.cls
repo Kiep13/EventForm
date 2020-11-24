@@ -17,10 +17,24 @@ public with sharing class Field {
   @AuraEnabled
   public Object value {get;set;}
 
+  @AuraEnabled
+  public List<PicklistItem> picklistValues {get;set;}
+
   public Field(FieldSetMember fieldSetMember) {
     this.label = fieldSetMember.getLabel();
     this.apiName = fieldSetMember.getFieldPath();
     this.required = fieldSetMember.getRequired();
     this.dataType = fieldSetMember.getType().name();
+
+    if(this.dataType == 'PICKLIST') {
+      this.picklistValues = new List<PicklistItem>();
+      List<Schema.PicklistEntry> picklistEntries = fieldSetMember.getSObjectField().getDescribe().getPicklistValues();
+      
+      for(Schema.PicklistEntry picklistEntry : picklistEntries) {
+        this.picklistValues.add(
+          new PicklistItem(picklistEntry.getLabel(), picklistEntry.getValue())
+          );
+      }
+    }
   }
 }
