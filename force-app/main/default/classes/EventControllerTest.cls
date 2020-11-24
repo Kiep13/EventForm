@@ -9,6 +9,7 @@ public with sharing class EventControllerTest {
   private static String INVALID_LABEL = 'Expected field label not be null';
   private static String INVALID_API_NAME = 'Expected field api name not be null';
   private static String INVALID_DATATYPE = 'Expected field datatype not be null';
+  private static String INVALID_EVENT_ID = 'Expected event id doesn\'t equal to expected';
   
   @TestSetup
   static void makeData(){
@@ -74,10 +75,11 @@ public with sharing class EventControllerTest {
   public static void updateEvent() {
     Event event = [SELECT Id FROM Event LIMIT 1];
     
-    EventController.upsertEvent(event);
+    String eventId = EventController.upsertEvent(event);
 
     List<Event> events = [SELECT Id FROM Event];
 
     System.assertEquals(1, events.size(), INVALID_EVENTS_AMOUNT);
+    System.assertEquals(eventId, events[0].Id, INVALID_EVENT_ID);
   }
 }

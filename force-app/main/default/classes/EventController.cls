@@ -39,7 +39,9 @@ public with sharing class EventController {
   }
 
   @AuraEnabled(Cacheable=False)
-  public static void upsertEvent(Event event) {
+  public static String upsertEvent(Event event) {
     Database.upsert(event);
+
+    return event.Id;
   }
 }

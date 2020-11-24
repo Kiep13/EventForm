@@ -9,12 +9,10 @@ import ID_FIELD from '@salesforce/schema/Event.Id';
 export default class EventForm extends LightningElement {
 
   SUCCESS_TITLE = 'Success';
-  ERROR_CREATE_TITLE = 'Error creating record';
-  ERROR_UPDATE_TITLE = 'Error updating record';
+  ERROR_UPSERT_TITLE = 'Error while trying to save';
   ERROR_GET_FIELDS = 'Error while getting fields info';
 
-  SUCCESS_CREATE_MESSAGE = 'Event created';
-  SUCCESS_UPDATE_MESSAGE = 'Event updated';
+  SUCCESS_UPSERT_MESSAGE = 'Event saved';
 
   SUCCESS_VARIANT = 'success';
   ERROR_VARIANT = 'error';
@@ -109,15 +107,26 @@ export default class EventForm extends LightningElement {
     console.log(5, record);
 
     upsertEvent({event : record})
-      .then(() => {
+      .then((response) => {
+        this.recordId = response;
+
         this.showToastEvent(this.SUCCESS_TITLE,
-                            this.SUCCESS_UPDATE_MESSAGE,
+                            this.SUCCESS_UPSERT_MESSAGE,
                             this.SUCCESS_VARIANT)
       })
       .catch(error => {
         console.log(error);
-        this.showToastEvent(this.ERROR_UPDATE_TITLE, 
-                            error.body.message,
+
+        let errorMessage = error.body.message ? error.body.message + '.' : '';
+        
+        for (let fieldName in error.body.fieldErrors) {
+          error.body.fieldErrors[fieldName].forEach((fieldError) => {
+            errorMessage += (fieldError.message + '.');
+          })
+        }
+
+        this.showToastEvent(this.ERROR_UPSERT_TITLE, 
+                            errorMessage,
                             this.ERROR_VARIANT);
       });
   }

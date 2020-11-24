@@ -25,6 +25,7 @@ public with sharing class Field {
     this.apiName = fieldSetMember.getFieldPath();
     this.required = fieldSetMember.getRequired();
     this.dataType = fieldSetMember.getType().name();
+    this.helpText = fieldSetMember.getSObjectField().getDescribe().getInlineHelpText();
 
     if(this.dataType == 'PICKLIST') {
       this.picklistValues = new List<PicklistItem>();
