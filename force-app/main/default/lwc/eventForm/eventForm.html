@@ -1,0 +1,20 @@
+<template>
+  <lightning-card title="Event form" icon-name="utility:event">
+		<div class="slds-card__body_inner">
+
+      <template for:each={fields} for:item="field">
+        <lightning-input label={field.label} 
+                         key={field.apiName}
+                         value={field.value}
+                         required={field.required}
+                         type={field.dataType}>
+        </lightning-input>
+      </template>
+
+      <lightning-button class="slds-var-m-top_small" variant="brand" type="submit" label="Save">
+      </lightning-button>
+
+    </div>
+  </lightning-card>
+
+</template>
